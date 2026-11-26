@@ -3,7 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFDirectoryLoader, DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from src.embeddings import get_embeddings
 from langchain_community.vectorstores import FAISS
 
 load_dotenv()
@@ -17,7 +17,7 @@ def build_index():
     if not docs:
         raise SystemExit(f"No documents found in {DATA_DIR}. Add PDFs or .txt files first.")
     chunks = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200).split_documents(docs)
-    store = FAISS.from_documents(chunks, OpenAIEmbeddings())
+    store = FAISS.from_documents(chunks, get_embeddings())
     store.save_local(str(INDEX_DIR))
     print(f"Indexed {len(chunks)} chunks from {len(docs)} documents -> {INDEX_DIR}")
 

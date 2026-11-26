@@ -1,19 +1,38 @@
 # Enterprise RAG
 
 Practice project following Krish Naik's "Build Enterprise-Grade RAG Applications | LIVE 8-Hour Marathon"
-(https://www.youtube.com/watch?v=bjkjaqUZl4E). Starter RAG pipeline: load documents -> chunk -> embed -> FAISS -> LLM answer.
+(https://www.youtube.com/watch?v=bjkjaqUZl4E).
+
+A Retrieval-Augmented Generation (RAG) app: it answers questions **only from your own documents**.
+
+**Pipeline:** load documents -> split into chunks -> embed locally (FastEmbed, `BAAI/bge-small-en-v1.5`) -> store in FAISS -> retrieve top 4 chunks -> LLM (Groq `openai/gpt-oss-20b`) answers from that context.
+
+Runs fully on free tiers: embeddings are computed on your CPU, answers use a free Groq API key.
 
 ## Setup (Windows PowerShell)
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.example .env   # then put your API keys in .env
+copy .env.example .env   # put your free Groq key (console.groq.com/keys) in .env
 ```
 
 ## Run
-1. Put PDFs or .txt files in `data/`
-2. `python -m src.ingest` - builds the vector index
-3. `python -m src.rag` - ask questions in the terminal, or `streamlit run app.py` for a web UI
+```powershell
+.\run_demo.ps1
+```
+This builds the index (first run only) and opens the web app at http://localhost:8501.
 
-Add your own code from the video in `src/` and `notebooks/` as you follow along.
+Or step by step:
+1. Put PDFs or .txt files in `data/` (a sample handbook is included)
+2. `python -m src.ingest` - builds the vector index (re-run after adding documents)
+3. `streamlit run app.py` - web UI, or `python -m src.rag` - terminal Q&A
+
+## Project structure
+| File | What it does |
+|---|---|
+| `src/ingest.py` | Loads documents, chunks them (1000 chars, 200 overlap), embeds and saves a FAISS index |
+| `src/embeddings.py` | Local embedding model (no API key needed) |
+| `src/rag.py` | Retriever + prompt + LLM chain (LangChain LCEL) |
+| `app.py` | Streamlit web interface |
+| `run_demo.ps1` | One-click demo launcher |

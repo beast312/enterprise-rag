@@ -4,6 +4,7 @@ langchain-openai
 langchain-groq
 langchain-text-splitters
 faiss-cpu
+fastembed
 pypdf
 python-dotenv
 streamlit
