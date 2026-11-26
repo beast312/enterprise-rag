@@ -1,0 +1,16 @@
+Acme Corp Employee Handbook (Sample document for the RAG demo)
+
+Leave Policy
+Full-time employees get 24 days of paid leave per year. Up to 10 unused days can be carried over to the next year. Sick leave is separate: 12 days per year, and a doctor's note is needed for more than 3 days in a row.
+
+Work From Home
+Employees may work from home up to 3 days per week with their manager's approval. Core hours are 11:00 AM to 4:00 PM IST, when everyone must be available online.
+
+Expense Reimbursement
+Submit expenses within 30 days through the Finance portal with receipts attached. Travel meals are reimbursed up to INR 1,500 per day. Claims above INR 25,000 need approval from a department head.
+
+IT and Security
+Passwords must be changed every 90 days. Laptops must use full-disk encryption. Report lost devices to it-security@acme.example within 2 hours.
+
+Onboarding
+New joiners get a laptop on day one, a buddy for the first month, and a 30-60-90 day plan with their manager. Probation lasts 6 months.
