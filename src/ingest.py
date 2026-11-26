@@ -9,18 +9,29 @@ from langchain_community.vectorstores import FAISS
 load_dotenv()
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 INDEX_DIR = Path(__file__).resolve().parent.parent / "vectorstore"
+SUPPORTED = (".pdf", ".txt")
+
+
+def list_documents():
+    """Names of the documents currently in the knowledge base."""
+    return sorted(p.name for p in DATA_DIR.iterdir() if p.suffix.lower() in SUPPORTED)
 
 
 def build_index():
+    """Rebuild the FAISS index from every document in data/. Returns (files, chunks)."""
     docs = PyPDFDirectoryLoader(str(DATA_DIR)).load()
-    docs += DirectoryLoader(str(DATA_DIR), glob="**/*.txt", loader_cls=TextLoader).load()
+    docs += DirectoryLoader(
+        str(DATA_DIR), glob="**/*.txt", loader_cls=TextLoader,
+        loader_kwargs={"autodetect_encoding": True},
+    ).load()
     if not docs:
-        raise SystemExit(f"No documents found in {DATA_DIR}. Add PDFs or .txt files first.")
+        raise ValueError(f"No documents found in {DATA_DIR}. Add PDFs or .txt files first.")
     chunks = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200).split_documents(docs)
     store = FAISS.from_documents(chunks, get_embeddings())
     store.save_local(str(INDEX_DIR))
-    print(f"Indexed {len(chunks)} chunks from {len(docs)} documents -> {INDEX_DIR}")
+    return len(list_documents()), len(chunks)
 
 
 if __name__ == "__main__":
-    build_index()
+    files, chunks = build_index()
+    print(f"Indexed {chunks} chunks from {files} documents -> {INDEX_DIR}")

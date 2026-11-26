@@ -39,6 +39,19 @@ def build_chain():
     return {"context": retriever | fmt, "question": RunnablePassthrough()} | PROMPT | get_llm() | StrOutputParser()
 
 
+def load_retriever():
+    store = FAISS.load_local(str(INDEX_DIR), get_embeddings(), allow_dangerous_deserialization=True)
+    return store.as_retriever(search_kwargs={"k": 4})
+
+
+def ask(retriever, question):
+    """Answer a question and return (answer, source_chunks) so the UI can show where it came from."""
+    docs = retriever.invoke(question)
+    context = "\n\n".join(d.page_content for d in docs)
+    answer = (PROMPT | get_llm() | StrOutputParser()).invoke({"context": context, "question": question})
+    return answer, docs
+
+
 if __name__ == "__main__":
     import sys
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
